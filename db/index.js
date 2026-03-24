@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 // connecting the database
 const connectDb = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/liinks_builder");
+    // await mongoose.connect("mongodb://localhost:27017/liinks_builder");
+    await mongoose.connect("mongodb+srv://sachinyadav53730:Shweta@cluster0.y33rt34.mongodb.net/liinks_builder");
     console.log("Database is Connected Successfully");
   } catch (err) {
     console.error("Database Connection Failed:", err);
