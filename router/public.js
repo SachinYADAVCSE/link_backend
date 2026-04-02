@@ -19,6 +19,7 @@ publicRoutes.get("/:slug", async (req, res) => {
         { url: slug, isPublished: true }
     ).lean()
 
+    console.log(page, "This is the Page that is coming from frontend")
     // Return the Page
     if (!page) return res.status(404).json({ code: 404, message: "Page Not Found" });
 
@@ -38,7 +39,8 @@ publicRoutes.get("/:slug", async (req, res) => {
         username: user.username,
         profile: user.profile,
         title: page.title,
-        blocks: page.blocks
+        blocks: page.blocks,
+        theme: page.theme
     });
 })
 

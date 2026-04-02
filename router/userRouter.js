@@ -11,50 +11,50 @@ const router = Router();
 
 console.log("inside router file");
 
-router.post('/register', upload.single('profile.avatarUrl'), async (req, res) => {
-    console.log("it workings, ###########");
+  router.post('/register', upload.single('profile.avatarUrl'), async (req, res) => {
+      console.log("it workings, ###########");
 
-    try {
-        const { name, username, email, password } = req.body;
-        const profileFile = req.file;
+      try {
+          const { name, username, email, password } = req.body;
+          const profileFile = req.file;
 
-        if (!name || !username || !email || !password)
-            return res.status(400).json({ msg: "Please fill all the Fields" });
+          if (!name || !username || !email || !password)
+              return res.status(400).json({ msg: "Please fill all the Fields" });
 
-        // Check if user doesn't already exists
-        // $or this is a query operator of mongodb which is used to do or thing, like email or username if exist one of them
-        const exist = await UserModel.findOne({ $or: [{ username }, { email }] });
+          // Check if user doesn't already exists
+          // $or this is a query operator of mongodb which is used to do or thing, like email or username if exist one of them
+          const exist = await UserModel.findOne({ $or: [{ username }, { email }] });
 
-        if (exist) return res.status(409).json({ error: "User already Exists" });
+          if (exist) return res.status(409).json({ error: "User already Exists" });
 
-        // hashing the password
-        const passwordHash = await bcrypt.hash(password, 10);
+          // hashing the password
+          const passwordHash = await bcrypt.hash(password, 10);
 
-        //  inserting the data into the database
+          //  inserting the data into the database
 
-        const user = await UserModel.create({
-            name: name,
-            username: username,
-            email: email,
-            passwordHash: passwordHash,
-            profile: {
-                avatarUrl: profileFile ? profileFile.path : null,
-            },
-            settings: { publicPageSlug: username, isOnboarded: false}
-        });
+          const user = await UserModel.create({
+              name: name,
+              username: username,
+              email: email,
+              passwordHash: passwordHash,
+              profile: {
+                  avatarUrl: profileFile ? profileFile.path : null,
+              },
+              settings: { publicPageSlug: username, isOnboarded: false}
+          });
 
-        const token = jwt.sign({ id: user._id, username: username }, JWT_SECRET)
+          const token = jwt.sign({ id: user._id, username: username }, JWT_SECRET)
 
-        return res.status(200).json({
-            user: user,
-            token: token
-        });
+          return res.status(200).json({
+              user: user,
+              token: token
+          });
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
-})
+      } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: 'Server error' });
+      }
+  })
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
