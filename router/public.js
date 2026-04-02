@@ -40,7 +40,8 @@ publicRoutes.get("/:slug", async (req, res) => {
         profile: user.profile,
         title: page.title,
         blocks: page.blocks,
-        theme: page.theme
+        theme: page.theme,
+        socials: page.socials
     });
 })
 
