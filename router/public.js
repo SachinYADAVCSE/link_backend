@@ -80,6 +80,7 @@ publicRoutes.get("/:slug", async (req, res) => {
     // Returning the Possible useful items  
     // Add the Description or Caption
     return res.json({
+        pageId: page._id,
         username: user.username,
         profile: user.profile,
         title: page.title,
