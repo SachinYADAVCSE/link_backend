@@ -1,9 +1,40 @@
 import Router from 'express';
-import { UserModel, LinkPageModel } from '../db/index.js';
+import { UserModel, LinkPageModel, PageViewModel } from '../db/index.js';
+import { LinkClickModel } from "../db/index.js";
 
 const publicRoutes = Router();
 
-// Public slug Api
+
+// this is the route which has been added.
+publicRoutes.post("/click", async (req, res) => {
+  try {
+    // fetching the pageId and LinkId from body
+    const { pageId, linkId } = req.body;
+
+    if (!pageId || !linkId) {
+      return res.status(400).json({ message: "Missing data" });
+    }
+
+    // then creating Link Click Model -- taking pageId & link id, Ip and userAgent.
+    await LinkClickModel.create({
+      pageId,
+      linkId,
+      ip: req.ip,
+      userAgent: req.headers["user-agent"]
+    });
+
+    // returning the success as true.
+    res.json({ success: true });
+
+  } catch (err) {
+    
+    console.error("Click tracking error:", err);
+    res.status(500).json({ message: "Error tracking click" });
+  }
+});
+
+
+// Public slug Apix
 publicRoutes.get("/:slug", async (req, res) => {
     const slug = req.params.slug; // this is a page things -- UrL Not a Slug.
 
@@ -23,6 +54,19 @@ publicRoutes.get("/:slug", async (req, res) => {
     // Return the Page
     if (!page) return res.status(404).json({ code: 404, message: "Page Not Found" });
 
+
+    // Track Page View (ADD THIS)
+    try {
+        await PageViewModel.create({
+          pageId: page._id,
+          ip: req.ip,
+          userAgent: req.headers["user-agent"]  
+        });
+    } catch (err) {
+        console.error("Analytics error (view): ", err);
+    }
+
+
     // user 
     const user = await UserModel.findOne({ "_id": page.userId }) // it's finding the user based on the PublicPageSlug.
 
@@ -33,7 +77,7 @@ publicRoutes.get("/:slug", async (req, res) => {
         return res.status(404).json({ code: 404, message: "Invalid Url Address" });
     }
 
-    // Returning the Possible useful items
+    // Returning the Possible useful items  
     // Add the Description or Caption
     return res.json({
         username: user.username,

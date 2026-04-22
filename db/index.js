@@ -120,4 +120,24 @@ const templateSchema = new mongoose.Schema({
 
 export const TemplateModel = new mongoose.model("Template", templateSchema);
 
+const pageViewSchema = new mongoose.Schema({
+  pageId: { type: mongoose.Types.ObjectId, ref: "LinkPage", index: true },
+  ip: String,
+  userAgent: String,
+  createdAt: { type: Date, default: Date.now }
+});
+
+export const PageViewModel = mongoose.model("PageView", pageViewSchema);
+
+const linkClickSchema = new mongoose.Schema({
+  linkId: String, // from block.id
+  pageId: { type: mongoose.Types.ObjectId, ref: "LinkPage", index: true },
+  ip: String,
+  userAgent: String,
+  createdAt: { type: Date, default: Date.now }
+});
+
+export const LinkClickModel = mongoose.model("LinkClick", linkClickSchema);
+
+
 // We want database Archi for 

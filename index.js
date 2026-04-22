@@ -2,6 +2,7 @@
 import express from "express";
 // import { connectDB } from "./db.js";\
 import {} from 'dotenv/config';
+import analyticsRoute from "./router/analytics.js";
 import  router from "./router/userRouter.js";
 import linkRoutes  from "./router/links.js";
 import  publicRoutes  from "./router/public.js";
@@ -29,6 +30,7 @@ app.get("/",(req, res)=>{
 // this is for purely server visits
 app.use("/api/auth", router);
 app.use("/api/links", linkRoutes);
+app.use("/api/analytics", analyticsRoute);
 app.use("/api/public", publicRoutes);
 app.use("/api/onboarding/complete", OnboardingRoutes);
 app.use("/api/templates", templateRoute);
